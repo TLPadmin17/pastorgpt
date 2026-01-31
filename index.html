@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PastorGPT – Chat Pastoral</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:0; }
+    .chat-container { max-width:600px; margin:0 auto; height:100vh; display:flex; flex-direction:column; }
+    .header { background:#2c3e50; color:#fff; padding:15px; text-align:center; }
+    .messages { flex:1; padding:15px; overflow-y:auto; }
+    .msg { margin-bottom:12px; }
+    .user { text-align:right; }
+    .bot { text-align:left; }
+    .bubble { display:inline-block; padding:10px 14px; border-radius:12px; max-width:80%; }
+    .user .bubble { background:#3498db; color:#fff; }
+    .bot .bubble { background:#ecf0f1; color:#000; }
+    .input-area { display:flex; padding:10px; background:#ddd; }
+    input { flex:1; padding:10px; border:none; border-radius:8px; }
+    button { margin-left:8px; padding:10px 16px; border:none; border-radius:8px; background:#2c3e50; color:#fff; }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="header">🙏 PastorGPT – Chat Pastoral</div>
+    <div class="messages" id="messages"></div>
+    <div class="input-area">
+      <input type="text" id="input" placeholder="Escribe tu mensaje..." />
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
+  </div>
+
+<script>
+const responses = [
+  { keys: ['paz'], text: '🙏 La paz verdadera no viene de que todo esté bien, sino de saber que Dios gobierna aun en medio del caos.\n😂 Si no llega la paz, apaga un rato el celular… a veces el ruido no es espiritual.' },
+  { keys: ['amor'], text: '🙏 El amor nace en Dios y se vive sirviendo a otros con sinceridad.\n😂 Amar cuesta… pero sale más barato que andar peleado con todos.' },
+  { keys: ['oracion','orar'], text: '🙏 La oración es hablar con Dios con confianza, no con discursos largos.\n😂 Él no cobra por minuto, así que ora tranquilo.' },
+  { keys: ['cahuin','chisme'], text: '🙏 El cahuin divide y apaga el testimonio cristiano.\n😂 Si el chisme fuera ayuno, muchos ya serían santos.' },
+  { keys: ['desanimo'], text: '🙏 El desánimo no define tu fe; es solo una etapa del camino.\n😂 Hasta Elías se deprimió… y Dios no le quitó el carnet de profeta.' },
+  { keys: ['tristeza'], text: '🙏 Dios está cerca de los quebrantados de corazón.\n😂 Llorar está bien, pero no te quedes a vivir ahí.' },
+  { keys: ['alegria','feliz'], text: '🙏 La alegría del Señor es nuestra fuerza diaria.\n😂 Si estás alegre, compártelo… pero sin presumir demasiado.' },
+  { keys: ['consejo','concejo'], text: '🙏 El buen consejo nace de la Palabra y de escuchar con humildad.\n😂 Google ayuda, pero no reemplaza a un hermano sabio.' },
+  { keys: ['debilidad','devilidad'], text: '🙏 En la debilidad se perfecciona el poder de Dios.\n😂 No eres débil… estás en modo aprendizaje.' },
+  { keys: ['juventud','joven'], text: '🙏 La juventud es tiempo de decisiones que marcan la vida.\n😂 Aprovecha ahora… después duelen más las rodillas.' },
+  { keys: ['biblia'], text: '🙏 La Biblia no es solo para leer, es para vivirla.\n😂 No muerde, pero sí confronta.' },
+  { keys: ['pastor'], text: '🙏 Los pastores también necesitan oración y apoyo.\n😂 No vienen con batería infinita, recárgalos con amor.' },
+  { keys: ['cumpleanos','cumple'], text: '🙏 Cada año es un regalo de Dios para crecer y agradecer.\n😂 Más años, más sabiduría… eso dice la fe.' },
+  { keys: ['radio','tlp'], text: '🙏 Radio TLP es un medio para edificar y acompañar.\n😂 Sintonízala, no solo cuando se corta el Spotify.' },
+  { keys: ['ofrenda','ofrendas'], text: '🙏 Ofrendar es un acto de gratitud, no de obligación.\n😂 Dios ama al dador alegre, no al nervioso.' },
+  { keys: ['matrimonio'], text: '🙏 El matrimonio se construye con perdón y compromiso diario.\n😂 Amar es fácil… convivir es el milagro.' },
+  { keys: ['inseguridad','miedo'], text: '🙏 La confianza crece cuando recordamos que Dios cuida de nosotros.\n😂 Y si no basta… llama al Hno. Oriel, instala alarmas.' },
+  { keys: ['alabanza'], text: '🙏 Alabar es reconocer quién es Dios más allá de las circunstancias.\n😂 No importa si desafinas, Dios escucha el corazón.' },
+  { keys: ['adoracion'], text: '🙏 Adorar es rendir la vida, no solo cantar.\n😂 La adoración no se apaga cuando termina la música.' },
+  { keys: ['obediencia'], text: '🙏 Obedecer a Dios trae fruto y dirección.\n😂 A veces cuesta… pero desobedecer sale más caro.' },
+  { keys: ['sinceridad'], text: '🙏 Dios valora un corazón sincero más que palabras bonitas.\n😂 Mejor honesto que espiritual de cartón.' }
+];
+
+function sendMessage() {
+  const input = document.getElementById('input');
+  const text = input.value.toLowerCase();
+  if (!text) return;
+
+  addMessage(text, 'user');
+  input.value = '';
+
+  let reply = '🙏 Gracias por escribir. Dios conoce tu corazón.\n😂 Si necesitas algo más específico, intenta decirlo con otras palabras.';
+
+  for (let r of responses) {
+    if (r.keys.some(k => text.includes(k))) {
+      reply = r.text;
+      break;
+    }
+  }
+
+  setTimeout(() => addMessage(reply, 'bot'), 600);
+}
+
+function addMessage(text, sender) {
+  const messages = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + sender;
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.innerText = text;
+  div.appendChild(bubble);
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+</script>
+</body>
+</html>
